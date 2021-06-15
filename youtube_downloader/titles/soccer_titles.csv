@@ -1,0 +1,2 @@
+search_str, format, writeinfojson, metafromtitle, match_filter, matchtitle, rejecttitle, dateafter, datebefore, max_filesize, min_filesize, max_downloads
+"soccer", "mp4_640x360", "True", "None", "None", "None", "(Funny)|(Song)|(Rhythm)/i", "20121026", "None", "600M", "1M", "10"

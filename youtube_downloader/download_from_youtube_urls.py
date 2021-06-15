@@ -49,6 +49,10 @@ def download(url: str, options: dict):
 
 
 def load_video_urls_from_csv(csv_file):
+    """
+    csv file must have fmt on any one given line:
+        channel, format, lang, yt_title, yt_url
+    """
     video_info_list = []
     with open(csv_file, 'r') as f_csv:
         _ = f_csv.readline()  # header
@@ -66,11 +70,12 @@ def load_video_urls_from_csv(csv_file):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--url_csv', type=str,
-                        default="yt_urls.csv",
-                        help="csv file with url,video_title,fmt")
-    parser.add_argument('-v', '--video_dir', type=str,
-                        default="yt_downloaded_videos",
-                        help="directory where videos are downloaded to")
+                        default="soccer_fullmatch.csv",
+                        help="csv file with channel,format,lang,yt_title,yt_url vals")
+    parser.add_argument('-v', '--download_dir', type=str,
+                        default="../datasets/soccer/orig_video",
+                        help="directory where videos are downloaded to. " +
+                        "Created automatically if it doesnt alr exist")
     args = parser.parse_args()
     return args
 
@@ -78,8 +83,7 @@ def parse_args():
 def main():
     args = parse_args()
     download_list = load_video_urls_from_csv(args.url_csv)
-    download_dir = args.video_dir
-    os.makedirs(download_dir, exist_ok=True)
+    os.makedirs(args.download_dir, exist_ok=True)
 
     # add format and outtmpl later
     ydl_opts = {"progress_hooks": [_my_hook]}
@@ -88,7 +92,7 @@ def main():
         fmt = YL_FMT_DICT[format]
         try:
             ydl_opts["format"] = fmt
-            ydl_opts["outtmpl"] = os.path.join(download_dir, f'%(title)s-{format}.%(ext)s')
+            ydl_opts["outtmpl"] = os.path.join(args.download_dir, f'%(title)s-{format}.%(ext)s')
             download(yt_url, ydl_opts)
         except youtube_dl.utils.DownloadError:
             print(f'download error: {yt_url} | {format}')
