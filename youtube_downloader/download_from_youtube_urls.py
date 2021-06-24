@@ -17,8 +17,10 @@ fmt_code   extension  resolution  note
 
 from __future__ import unicode_literals
 import youtube_dl
+import subprocess
 import argparse
 import os
+import re
 
 
 YL_FMT_DICT = {
@@ -38,9 +40,23 @@ YL_FMT_DICT = {
 }
 
 
-def _my_hook(d):
-    if d['status'] == 'finished':
+def _my_hook(response):
+    if response["status"] == "finished":
+        global CURRENT_FILENAME
+        CURRENT_FILENAME = response["filename"]
         print('Done downloading, now converting ...')
+
+
+def ffmpeg_extract_subclip(input_video, t1, t2, output_video):
+    cmd = ["ffmpeg", "-y",
+           "-ss", t1,
+           "-i", input_video,
+           "-t", t2,
+           "-map", "0",
+           "-c", "copy",
+           output_video]
+    output, error = subprocess.Popen(
+        cmd, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
 
 
 def download(url: str, options: dict):
@@ -50,8 +66,8 @@ def download(url: str, options: dict):
 
 def load_video_urls_from_csv(csv_file):
     """
-    csv file must have fmt on any one given line:
-        channel, format, lang, yt_title, yt_url
+    csv file must have this fmt on any one given line:
+        channel, format, lang, yt_title, yt_url, max_length(HH:MM:SS)
     """
     video_info_list = []
     with open(csv_file, 'r') as f_csv:
@@ -59,23 +75,26 @@ def load_video_urls_from_csv(csv_file):
         for line in f_csv:
             line = line.strip().split(',')
             line = [data.strip() for data in line]
-            channel, format, lang, yt_title, yt_url = line
+            channel, format, lang, yt_title, yt_url, max_length = line
             if type is None:
                 print(f"Type {type} does not exist for video {yt_title} at {yt_url}")
                 continue
-            video_info_list.append([channel, format, lang, yt_title, yt_url])
+            video_info_list.append([channel, format, lang, yt_title, yt_url, max_length])
     return video_info_list
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--url_csv', type=str,
-                        default="soccer_fullmatch.csv",
+                        default="urls/soccer_fullmatch.csv",
                         help="csv file with channel,format,lang,yt_title,yt_url vals")
     parser.add_argument('-v', '--download_dir', type=str,
                         default="../datasets/soccer/orig_video",
                         help="directory where videos are downloaded to. " +
                         "Created automatically if it doesnt alr exist")
+    parser.add_argument('-k', '--keep_orig_if_trim',
+                        action='store_true',
+                        help="Keep orig videos if video length trimming is required")
     args = parser.parse_args()
     return args
 
@@ -87,13 +106,26 @@ def main():
 
     # add format and outtmpl later
     ydl_opts = {"progress_hooks": [_my_hook]}
+    time_fmt = re.compile(r"^\d{2}:[0-5][0-9]:[0-5][0-9]$")
 
-    for channel, format, lang, yt_title, yt_url in download_list:
+    for channel, format, lang, yt_title, yt_url, max_length in download_list:
         fmt = YL_FMT_DICT[format]
         try:
             ydl_opts["format"] = fmt
             ydl_opts["outtmpl"] = os.path.join(args.download_dir, f'%(title)s-{format}.%(ext)s')
             download(yt_url, ydl_opts)
+
+            if max_length == "-1":  # no video trimming, use full orig length
+                continue
+            if not time_fmt.match(max_length):
+                print(f"max_length fmt must be a valid HH:MM:SS not {max_length}")
+                continue
+            trim_basename = "trim_" + os.path.basename(CURRENT_FILENAME)
+            trim_video_save_path = os.path.join(args.download_dir, trim_basename)
+            ffmpeg_extract_subclip(CURRENT_FILENAME, "00:00:00", max_length, trim_video_save_path)
+            if not args.keep_orig_if_trim:  # remove orig file if not required to keep orig
+                os.remove(CURRENT_FILENAME)
+
         except youtube_dl.utils.DownloadError:
             print(f'download error: {yt_url} | {format}')
 

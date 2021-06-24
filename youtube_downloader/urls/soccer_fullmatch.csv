@@ -1,7 +1,9 @@
-channel, format, lang, yt_title, yt_url
-FC Barcelona,    mp4_1280x720, eng, FULL MATCH: Barça 5-2 Mallorca (2019/2020), https://youtu.be/rxslQS6KTS4
-FC Barcelona,    mp4_1280x720, eng, FULL MATCH: Real Madrid 2 - 3 Barça (2017) Messi grabs dramatic late win in #ElClásico!!, https://youtu.be/3j_daNHio4o
-FC Barcelona,    mp4_1280x720, eng, FULL MATCH: BARÇA 3-2 REAL MADRID (SPANISH SUPERCUP FINAL), https://youtu.be/IPMxipAkvCI
-FIFA TV,         mp4_1280x720, eng, Portugal v Spain | 2018 FIFA World Cup | Full Match, https://youtu.be/Xhu5Bz1xDf0
-Emirates FA Cup, mp4_1280x720, eng, FULL MATCH | The Blues Too Strong For Manchester United | Emirates FA Cup Semi-Final 2019-20, https://youtu.be/fCG2ENyzbEA
-La Liga,         mp4_1280x720, esp, Full Match Real Madrid vs Atlético de Madrid LaLiga 2017/2018, https://youtu.be/DqOnf9_sJ8A
+channel, format, lang, yt_title, yt_url, max_length(HH:MM:SS)
+FC Barcelona,    mp4_1280x720, eng, FULL MATCH: BARÇA 3-2 REAL MADRID (SPANISH SUPERCUP FINAL), https://youtu.be/IPMxipAkvCI, -1
+FC Barcelona,    mp4_1280x720, eng, FULL MATCH: Barça 5-2 Mallorca (2019/2020), https://youtu.be/rxslQS6KTS4, -1
+Emirates FA Cup, mp4_1280x720, eng, FULL MATCH | The Blues Too Strong For Manchester United | Emirates FA Cup Semi-Final 2019-20, https://youtu.be/fCG2ENyzbEA, -1
+FC Barcelona,    mp4_1280x720, eng, FULL MATCH: Real Madrid 2 - 3 Barça (2017) Messi grabs dramatic late win in #ElClásico!!, https://youtu.be/3j_daNHio4o, -1
+FC Barcelona,    mp4_1280x720, eng, FULL MATCH: BARÇA 3-2 REAL MADRID (SPANISH SUPERCUP FINAL), https://youtu.be/IPMxipAkvCI, -1
+FIFA TV,         mp4_1280x720, eng, Portugal v Spain | 2018 FIFA World Cup | Full Match, https://youtu.be/Xhu5Bz1xDf0, -1
+La Liga,         mp4_1280x720, esp, Full Match Real Madrid vs Atlético de Madrid LaLiga 2017/2018, https://youtu.be/DqOnf9_sJ8A, -1
+LaLiga,          mp4_1280x720, esp, Real Madrid vs FC Barcelona (2-3) Matchday 33 2016/2017 - FULL MATCH, https://youtu.be/cXBfVPp1DJU, -1

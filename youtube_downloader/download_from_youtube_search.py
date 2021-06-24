@@ -49,7 +49,7 @@ def download(search_str: str, options: dict):
         ydl.download([search_str])
 
 
-def load_video_title_opts_from_csv(csv_file):
+def load_video_search_opts_from_csv(csv_file):
     """
     csv file must have this 12 value fmt on any one given line with values inside double quotes:
         title: search_str, format, writeinfojson, metafromtitle, match_filter, matchtitle, \
@@ -78,7 +78,7 @@ def load_video_title_opts_from_csv(csv_file):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--title_csv', type=str,
-                        default="titles/soccer_titles.csv",
+                        default="search_keywords/soccer_keyword.csv",
                         help="csv file with reuired fmt")
     parser.add_argument('-v', '--download_dir', type=str,
                         default="datasets/soccer/orig_video_searched",
@@ -90,7 +90,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    download_list = load_video_title_opts_from_csv(args.title_csv)
+    download_list = load_video_search_opts_from_csv(args.title_csv)
     os.makedirs(args.download_dir, exist_ok=True)
 
     # add format and outtmpl later

@@ -1,4 +1,6 @@
-channel, format, lang, yt_title, yt_url
-mi_basketball篮球迷恋家, mp4_1280x720, eng, Lakers Vs Miami Heat Full Game, https://youtu.be/koi01K4h7tc
-Pinnacle Apex, mp4_1280x720, eng, Golden State Warriors vs. Brooklyn Nets Full Game 1080p 60fps, https://youtu.be/KAZ-U8vYqZg
-Time for Basketball, mp4_1280x720, eng, Los Angeles Lakers vs Houston Rockets NBA FULL GAME 10.01.21, https://youtu.be/aHVd9vVWVSQ
+channel, format, lang, yt_title, yt_url, max_length(HH:MM:SS)
+mi_basketball篮球迷恋家, mp4_1280x720, eng, Lakers Vs Miami Heat Full Game, https://youtu.be/koi01K4h7tc, -1
+Pinnacle Apex, mp4_1280x720, eng, Golden State Warriors vs. Brooklyn Nets Full Game 1080p 60fps, https://youtu.be/KAZ-U8vYqZg, -1
+Time for Basketball, mp4_1280x720, eng, Los Angeles Lakers vs Houston Rockets NBA FULL GAME 10.01.21, https://youtu.be/aHVd9vVWVSQ, -1
+FIBA - The Basketball Channel, mp4_1280x720, esp, Mexico v Serbia - Full Game | 2021 Acropolis International Basketball Tournament, https://youtu.be/Vd7n8lO1-vI, -1
+Pinnacle Apex, mp4_1280x720, eng, Lakers vs Wizards | Full Game FHD 60FPS | February 22, 2021, https://youtu.be/gjpZ7EyweCk, -1

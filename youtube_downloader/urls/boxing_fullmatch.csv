@@ -1,4 +1,12 @@
-channel, format, lang, yt_title, yt_url
-DAZN Boxing, mp4_1280x720, eng, FULL FIGHT | Floyd Mayweather Jr. vs. Marcos Maidana (DAZN Rewind), https://youtu.be/KYvOC7MBuUw
-DAZN Boxing, mp4_1280x720, eng, FULL FIGHT | Canelo vs. Daniel Jacobs (DAZN REWIND), https://youtu.be/1VbXe9ZjzTM
-Premier Boxing Champions, mp4_1280x720, eng, Pacquiao vs Broner FULL FIGHT: January 19 2019 - PBC on Showtime, https://youtu.be/gM9zTdzI98k
+channel, format, lang, yt_title, yt_url, max_length(HH:MM:SS)
+DAZN Boxing, mp4_1280x720, eng, FULL FIGHT | Floyd Mayweather Jr. vs. Marcos Maidana (DAZN Rewind), https://youtu.be/KYvOC7MBuUw, -1
+DAZN Boxing, mp4_1280x720, eng, FULL FIGHT | Canelo vs. Daniel Jacobs (DAZN REWIND), https://youtu.be/1VbXe9ZjzTM, -1
+Premier Boxing Champions, mp4_1280x720, eng, Pacquiao vs Broner FULL FIGHT: January 19 2019 - PBC on Showtime, https://youtu.be/gM9zTdzI98k, -1
+Wrestling Full Shows, mp4_1280x720, eng, Naoya Inoue Vs Michael Dasmarinas BOXING Live Full MATCH FULL Event Fight 19th June 2021 Today, https://youtu.be/XZXryUlfv2c, -1
+Golden Boy Boxing, mp4_1280x720, eng, Golden Boy On ESPN: Ryan Garcia vs Fernando Vargas (FULL FIGHT), https://youtu.be/0Z0VajMcyR4, -1
+Thats why MMA!, mp4_1280x720, eng, Floyd Mayweather (USA) vs Tenshin Nasukawa (Japan) | KNOCKOUT BOXING fight HD, https://youtu.be/D0duHmPJCP0, -1
+DAZN Boxing, mp4_1280x720, eng, FULL FIGHT | Ryan Garcia vs. Jose Lopez, https://youtu.be/ZujA_tXU5ts, -1
+Golden Boy Boxing, mp4_1280x720, eng, Golden Boy On ESPN: Ryan Garcia vs Jayson Velez (FULL FIGHT), https://youtu.be/u42EfGuF6Tg, -1
+Project Mac Gaming, mp4_1280x720, eng, Anthony Joshua VS Joseph Parker - FULL FIGHT [HD], https://youtu.be/eSLBQWrSqug, -1
+DAZN Boxing, mp4_1280x720, eng, FULL FIGHT | KSI vs. Logan Paul 2 (DAZN REWIND), https://youtu.be/wACEHF2_5LE, -1
+Kondor GMR, mp4_1280x720, eng, Julio Cesar Chavez Jr. vs. Anderson Silva - FullFight Highlights, https://youtu.be/0oZAou4CpVI, -1
