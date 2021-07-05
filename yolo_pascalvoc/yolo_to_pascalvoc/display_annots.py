@@ -6,15 +6,15 @@ from utils import cxywh2cxyxy
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Object Detection Annotation display for yolo or voc')
-    parser.add_argument("-i",
+    parser.add_argument("-ip    ",
                         "--image_path",
                         default="yolo/images/COCO_train2014_000000000025.jpg",
                         help='path to image where annotations qwill be drawn')
-    parser.add_argument('-t',
-                        '--type_of_annotation',
+    parser.add_argument('-at', '--annotation_type', type=str,
                         default='voc',
-                        help='Annotation Type: yolo or voc')
-    parser.add_argument('-a',
+                        choices=['voc', 'yolo'],
+                        help='Annotation Type. Default: voc')
+    parser.add_argument('-ap',
                         '--annot_path',
                         default="VOCdevkit/VOC2007/Annotations/COCO_train2014_000000000025.xml",
                         help='Path to annotation file. Must match with the annotation type')
@@ -69,13 +69,10 @@ def main():
     img = cv2.imread(args.image_path)
     height, width, _ = img.shape
 
-    if args.type_of_annotation == "voc":
+    if args.annotation_type == "voc":
         final_labels = get_xml_annot_for_voc(args.annot_path)
-    elif args.type_of_annotation == "yolo":
+    elif args.annotation_type == "yolo":
         final_labels = get_txt_annot_for_yolo(args.annot_path, width, height)
-    else:
-        raise NotImplementedError(
-            f"Annotation type {args.type_of_annotation} not supported")
 
     for classname, xmin, ymin, xmax, ymax in final_labels:
         cv2.rectangle(img, (xmin, ymin), (xmax, ymax), (0, 0, 255), 2)

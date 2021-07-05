@@ -30,7 +30,7 @@ By default validation portion is set to 10%, set VALIDATION_PORTION to 0 convert
 To display the overlaid YOLO/PASCAL_VOC annotations on an image:
 
 ```shell
-$ python3 display_annot.py -i IMAGE_PATH -t ANNOT_TYPE -a ANNOT_PATH
+$ python3 display_annot.py -ip IMAGE_PATH -at ANNOT_TYPE -ap ANNOT_PATH
 ```
 
 To overlay yolo annotations to all images in `yolo/images` and save in `yolo_annotated_images`:
