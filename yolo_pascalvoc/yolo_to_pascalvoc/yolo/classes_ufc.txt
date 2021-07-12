@@ -1,9 +1,0 @@
-blue
-red
-idle
-punch
-kick
-clinch
-ground
-punch_unclear
-kick_unclear

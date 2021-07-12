@@ -7,7 +7,7 @@ import numpy as np
 import os.path as osp
 from lxml.etree import Element, SubElement, tostring
 
-from utils import cxywh2cxyxy
+from utils import cxcywh2xyxy
 random.seed(42)
 
 
@@ -126,7 +126,7 @@ def generate_voc_xml(img_id, full_imgpath, label_norm, classes, classes_det_flag
     # for each detected object
     for j in range(len(label_norm)):
         labels_conv = label_norm[j]
-        new_label = cxywh2cxyxy(
+        new_label = cxcywh2xyxy(
             labels_conv[0], width, height, labels_conv[1], labels_conv[2], labels_conv[3], labels_conv[4])
         class_name = classes[new_label[0]]
 
