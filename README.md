@@ -20,38 +20,9 @@ Currently support is only present for Computer Vision tasks
 
 -   [YOLO and Pascal VOC conversion for Object Detection Training](annotation_format_conv)
 
-PASCAL VOC2007
-
-        <annotation>
-          <folder>VOC2007</folder>
-          <filename>COCO_train2014_000000000025.jpg</filename>
-          <source>
-            <database>YOLO</database>
-          </source>
-          <size>
-            <width>640</width>
-            <height>426</height>
-            <depth>3</depth>
-          </size>
-          <segmented>0</segmented>
-          <object>
-            <name>zebra</name>
-            <pose>Unspecified</pose>
-            <truncated>0</truncated>
-            <difficult>0</difficult>
-            <bndbox>
-              <xmin>385</xmin>
-              <ymin>60</ymin>
-              <xmax>600</xmax>
-              <ymax>357</ymax>
-            </bndbox>
-          </object>
-        </annotation>
-
-YOLO format
-
-    23 0.770336 0.489695 0.335891 0.697559
-
+|                         <center>PASCAL VOC2007</center>                         |                         <center>YOLO</center>                         |
+| :-----------------------------------------------------------------------------: | :-------------------------------------------------------------------: |
+| <img src="annotation_format_conv/readme_imgs/pascal_voc2007.png" width="80%" /> | <img src="annotation_format_conv/readme_imgs/yolo.png" width="100%" /> |
 
 ### Data Acquisition
 
