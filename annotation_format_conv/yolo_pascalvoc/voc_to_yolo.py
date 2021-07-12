@@ -14,20 +14,20 @@ def parse_args():
     parser.add_argument("-r",
                         "--root_voc",
                         default="VOCdevkit/VOC2007",
-                        help='root folder containing VOC Annotations, ImageSets, and JPEGImages')
+                        help='Def: VOCdevkit/VOC2007. Root folder containing VOC Annotations, ImageSets, and JPEGImages')
     parser.add_argument('-l',
                         '--class_label_file',
                         default='VOCdevkit/classes.txt',
-                        help='txt file containing class names in newlines')
+                        help='Def: VOCdevkit/classes.txt. Txt file containing class names in newlines')
     parser.add_argument('-e',
                         '--src_img_ext_list',
                         nargs='+',
                         default=["jpg", "jpeg"],
-                        help='list extension of source images. i.e. -e jpg JPEG png PNG')
+                        help='Def: jpg jpeg. List extension of source images. i.e. -e jpg JPEG png PNG')
     parser.add_argument('-c',
                         '--copy_images',
                         action="store_true",
-                        help='If -c flag is passed, iamges are copied from PascalVOC image directory to yolo image directory')
+                        help='If -c flag is passed, images are copied from PascalVOC image directory to yolo image directory')
     args = parser.parse_args()
     return args
 
@@ -45,11 +45,11 @@ def get_class_name_idx_dict(class_label_file):
     """
     with open(class_label_file, 'r') as class_file:
         class_list = class_file.readlines()
-        class_name_idx_dict = {cname: i for i, cname in enumerate(class_list)}
+        class_name_idx_dict = {cname.strip(): i for i, cname in enumerate(class_list)}
     return class_name_idx_dict
 
 
-def convert_voc2yolo_annotation(src_image_path, src_annot_path, class_list, target_img_dir, target_label_dir):
+def convert_voc2yolo_annotation(src_image_path, src_annot_path, class_dict, target_img_dir, target_label_dir):
     basename = osp.basename(src_image_path)
     basename_no_ext = osp.splitext(basename)[0]
 
@@ -66,9 +66,9 @@ def convert_voc2yolo_annotation(src_image_path, src_annot_path, class_list, targ
     for obj in root.iter('object'):
         difficult = obj.find('difficult').text
         cls = obj.find('name').text
-        if cls not in class_list or int(difficult) == 1:
+        if cls not in class_dict or int(difficult) == 1:
             continue
-        cls_id = class_list.index(cls)
+        cls_id = class_dict[cls]
         xmlbox = obj.find('bndbox')
         b = (float(xmlbox.find('xmin').text), float(xmlbox.find('xmax').text), float(
             xmlbox.find('ymin').text), float(xmlbox.find('ymax').text))
@@ -81,8 +81,8 @@ def convert_voc2yolo_annotation(src_image_path, src_annot_path, class_list, targ
         shutil.copy(src_image_path, osp.join(target_img_dir, basename))
 
 
-def yolo_to_voc(root_voc_dir, valid_extn, class_label_file, copy_images, yolo_dir='yolo'):
-
+def yolo_to_voc(root_voc_dir, valid_extn, class_label_file, copy_images):
+    yolo_dir = 'yolo'
     image_dir = osp.join(root_voc_dir, "JPEGImages")
     annot_dir = osp.join(root_voc_dir, "Annotations")
 
@@ -106,6 +106,7 @@ def yolo_to_voc(root_voc_dir, valid_extn, class_label_file, copy_images, yolo_di
                                     target_img_dir=yolo_img_dir,
                                     target_label_dir=yolo_label_dir)
 
+    shutil.copy(class_label_file, osp.join(yolo_dir, "classes.txt"))
     print(f"Finished processing images in {image_dir}")
 
 

@@ -17,20 +17,20 @@ def parse_args():
     parser.add_argument("-r",
                         "--root_yolo",
                         default="yolo",
-                        help='root folder containing yolo txt annotation files dir (labels) & images dir (images)')
+                        help='Def: yolo. Root folder containing yolo txt annotation files dir (labels) & images dir (images)')
     parser.add_argument('-l',
                         '--label_file',
                         default='yolo/classes.txt',
-                        help='txt file containing class names in newlines')
+                        help='Def: yolo/classes.txt. Txt file containing class names in newlines')
     parser.add_argument('-e',
                         '--src_img_ext',
                         default='jpg',
-                        help='extension of source images. i.e. jpg/JPEG/png/PNG')
+                        help='Def: jpg. Extension of source images. i.e. jpg/JPEG/png/PNG')
     parser.add_argument('-v',
                         '--valid_portion',
                         default=0.1,
                         type=float,
-                        help='validation portion. If set to 0, no data saved for validation')
+                        help='Def: 0.1. Validation portion. If set to 0, no data saved for validation')
     args = parser.parse_args()
     return args
 

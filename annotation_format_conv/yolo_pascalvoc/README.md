@@ -35,7 +35,7 @@ YOLO data directory structure:
 To convert a yolo base dataset into Pascal VOC 2007:
 
 ```shell
-$ python3 yolo_to_voc.py -r YOLO_ROOT -l CLASS_NAME_FILE -e IMG_EXTENSION -v VALIDATION_PORTION
+$ python3 yolo_to_voc.py -r ROOT_YOLO -l CLASS_NAME_FILE -e IMG_EXTENSION -v VALIDATION_PORTION
 ```
 
 By default validation portion is set to 10%, set VALIDATION_PORTION to 0 convert data without validation portion.
@@ -73,6 +73,14 @@ PascalVOC 2007 data directory structure:
       └── classes.txt
 
 ### 2. Conversion
+
+o convert a Pascal VOC 2007 dataset into a yolo dataset:
+
+```shell
+$ python3 voc_to_yolo.py -r ROOT_VOC -l CLASS_NAME_FILE -e IMG_EXTENSION -c
+```
+
+Note: Including the `-c` flag copies the image from PascalVOC to the new YOLO directory
 
 ## Visualization
 
