@@ -12,6 +12,7 @@ fmt_code   extension  resolution  note
 5           flv       400x240
 43          webm      640x360
 18          mp4       640x360
+135+140     mp4+m4a   853x480
 22          mp4       1280x720    (best)
 """
 
@@ -22,6 +23,8 @@ import argparse
 import os
 import re
 
+# min download speed in KiB/s
+MIN_DOWNLOAD_SPEED = 200
 
 YL_FMT_DICT = {
     "m4a": '140',
@@ -36,11 +39,19 @@ YL_FMT_DICT = {
     "flv": '5',
     "webm": '43',
     "mp4_640x360": '18',
+    "mp4_853x480": '135+140',
     "mp4_1280x720": '22'
 }
 
 
 def _my_hook(response):
+    if "_speed_str" in response:
+        speed_str = response["_speed_str"]
+        if re.search(r"[0-9]+\.[0-9]+", speed_str):
+            speed, unit = float(speed_str[:-5]), speed_str[-5:]
+            if unit == "KiB/s" and speed < MIN_DOWNLOAD_SPEED:
+                print(f"Speed is below {MIN_DOWNLOAD_SPEED} {unit}. Throttling possible. Exiting process and restarting download")
+                exit(2)
     if response["status"] == "finished":
         global CURRENT_FILENAME
         CURRENT_FILENAME = response["filename"]
@@ -73,13 +84,17 @@ def load_video_urls_from_csv(csv_file):
     with open(csv_file, 'r') as f_csv:
         _ = f_csv.readline()  # header
         for line in f_csv:
+            if line[0] == '#':
+                continue  # skip comments
             line = line.strip().split(',')
             line = [data.strip() for data in line]
             channel, format, lang, yt_title, yt_url, max_length = line
             if type is None:
-                print(f"Type {type} does not exist for video {yt_title} at {yt_url}")
+                print(
+                    f"Type {type} does not exist for video {yt_title} at {yt_url}")
                 continue
-            video_info_list.append([channel, format, lang, yt_title, yt_url, max_length])
+            video_info_list.append(
+                [channel, format, lang, yt_title, yt_url, max_length])
     return video_info_list
 
 
@@ -92,9 +107,9 @@ def parse_args():
                         default="../datasets/soccer/orig_video",
                         help="directory where videos are downloaded to. " +
                         "Created automatically if it doesnt alr exist")
-    parser.add_argument('-k', '--keep_orig_if_trim',
-                        action='store_true',
-                        help="Keep orig videos if video length trimming is required")
+    parser.add_argument('-r', '--force_res', type=str,
+                        help="Overrrides the resolution value in csv. " +
+                             "Enter a valid resolution value in form mp4_640x360/mp4_853x480/mp4_1280x720")
     args = parser.parse_args()
     return args
 
@@ -109,22 +124,36 @@ def main():
     time_fmt = re.compile(r"^\d{2}:[0-5][0-9]:[0-5][0-9]$")
 
     for channel, format, lang, yt_title, yt_url, max_length in download_list:
+        format = format if args.force_res is None else args.force_res
         fmt = YL_FMT_DICT[format]
         try:
             ydl_opts["format"] = fmt
-            ydl_opts["outtmpl"] = os.path.join(args.download_dir, f'%(title)s-{format}.%(ext)s')
+            ydl_opts["outtmpl"] = os.path.join(
+                args.download_dir, f'%(title)s-{format}.%(ext)s')
+            # for avoiding youtube throtling
+            ydl_opts['retries'] = 5000
+            ydl_opts['socket_timeout'] = 1
+            ydl_opts["external_downloader"] = "aria2c"
             download(yt_url, ydl_opts)
 
             if max_length == "-1":  # no video trimming, use full orig length
                 continue
             if not time_fmt.match(max_length):
-                print(f"max_length fmt must be a valid HH:MM:SS not {max_length}")
+                print(
+                    f"max_length fmt must be a valid HH:MM:SS not {max_length}")
                 continue
-            trim_basename = "trim_" + os.path.basename(CURRENT_FILENAME)
-            trim_video_save_path = os.path.join(args.download_dir, trim_basename)
-            ffmpeg_extract_subclip(CURRENT_FILENAME, "00:00:00", max_length, trim_video_save_path)
-            if not args.keep_orig_if_trim:  # remove orig file if not required to keep orig
+
+            try:
+                trim_basename = "temp_trim_" + os.path.basename(CURRENT_FILENAME)
+                trim_video_save_path = os.path.join(
+                    args.download_dir, trim_basename)
+                ffmpeg_extract_subclip(
+                    CURRENT_FILENAME, "00:00:00", max_length, trim_video_save_path)
+
                 os.remove(CURRENT_FILENAME)
+                os.rename(trim_video_save_path, CURRENT_FILENAME)
+            except Exception as e:
+                print(e, f"Skipping {yt_title}")
 
         except youtube_dl.utils.DownloadError:
             print(f'download error: {yt_url} | {format}')

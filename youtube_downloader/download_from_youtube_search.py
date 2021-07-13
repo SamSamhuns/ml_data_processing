@@ -20,7 +20,10 @@ import youtube_dl
 import argparse
 import csv
 import os
+import re
 
+# min download speed in KiB/s
+MIN_DOWNLOAD_SPEED = 300
 
 YL_FMT_DICT = {
     "m4a": '140',
@@ -39,8 +42,17 @@ YL_FMT_DICT = {
 }
 
 
-def _my_hook(d):
-    if d['status'] == 'finished':
+def _my_hook(response):
+    if "_speed_str" in response:
+        speed_str = response["_speed_str"]
+        if re.search(r"[0-9]+\.[0-9]+", speed_str):
+            speed, unit = float(speed_str[:-5]), speed_str[-5:]
+            if unit == "KiB/s" and speed < MIN_DOWNLOAD_SPEED:
+                print(f"Speed is below {MIN_DOWNLOAD_SPEED} {unit}. Throttling possible. Exiting process and restarting download")
+                exit(2)
+    if response["status"] == "finished":
+        global CURRENT_FILENAME
+        CURRENT_FILENAME = response["filename"]
         print('Done downloading, now converting ...')
 
 
@@ -163,6 +175,11 @@ def main():
                 min_filesize[:-1]) * size_mult_dict[min_filesize[-1].upper()]
             ydl_opts["max_downloads"] = int(max_downloads)
             ydl_opts["default_search"] = f"ytsearch{int(max_downloads)}"
+
+            # for avoiding youtube throtling
+            ydl_opts['socket_timeout'] = 1
+            ydl_opts['retries'] = 1000
+            ydl_opts["external_downloader"] = "aria2c"
 
             ydl_opts = {k: v if v != "None" else None
                         for k, v in ydl_opts.items()}
