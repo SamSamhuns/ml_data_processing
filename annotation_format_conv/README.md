@@ -11,3 +11,4 @@ Navigate to `yolo_pascalvoc`
 
 -   [x] YOLO to PascalVOC
 -   [x] PascalVOC to YOLO
+-   [ ] COCO to YOLO

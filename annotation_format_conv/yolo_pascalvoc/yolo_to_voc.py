@@ -13,7 +13,7 @@ random.seed(42)
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description='YOLO fmt to Pascal VOC conversion for object detection task')
+        description='YOLO fmt to Pascal VOC conversion')
     parser.add_argument("-r",
                         "--root_yolo",
                         default="yolo",

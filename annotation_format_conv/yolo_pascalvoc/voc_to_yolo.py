@@ -10,7 +10,7 @@ from utils import xyxy2cxcywh
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description='YOLO fmt to Pascal VOC conversion for object detection task')
+        description='Pascal VOC to YOLO fmt conversion')
     parser.add_argument("-r",
                         "--root_voc",
                         default="VOCdevkit/VOC2007",
