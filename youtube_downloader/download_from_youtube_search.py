@@ -24,6 +24,10 @@ import re
 
 # min download speed in KiB/s
 MIN_DOWNLOAD_SPEED = 300
+# max number of download restarts
+MAX_DOWNLOAD_RESTARTS = 50
+# download unit MiB/s or KiB/s
+DOWNLOAD_UNIT = "KiB/s"
 
 YL_FMT_DICT = {
     "m4a": '140',
@@ -42,6 +46,11 @@ YL_FMT_DICT = {
 }
 
 
+class DownloadThrottleError(Exception):
+    """Raised when download throttling is detected"""
+    pass
+
+
 def _my_hook(response):
     if "_speed_str" in response:
         speed_str = response["_speed_str"]
@@ -49,7 +58,7 @@ def _my_hook(response):
             speed, unit = float(speed_str[:-5]), speed_str[-5:]
             if unit == "KiB/s" and speed < MIN_DOWNLOAD_SPEED:
                 print(f"Speed is below {MIN_DOWNLOAD_SPEED} {unit}. Throttling possible. Exiting process and restarting download")
-                exit(2)
+                raise DownloadThrottleError
     if response["status"] == "finished":
         global CURRENT_FILENAME
         CURRENT_FILENAME = response["filename"]
@@ -184,7 +193,21 @@ def main():
             ydl_opts = {k: v if v != "None" else None
                         for k, v in ydl_opts.items()}
             print("Downloading with options", ydl_opts)
-            download(search_str, ydl_opts)
+
+            # for avoiding youtube throtling
+            download_complete = False
+            i = 0
+            while not download_complete:
+                try:
+                    download(search_str, ydl_opts)
+                    download_complete = True
+                except DownloadThrottleError:
+                    print("Restarting download")
+                if i > MAX_DOWNLOAD_RESTARTS:
+                    print(f"Aborting. Max restarts exceeded {MAX_DOWNLOAD_RESTARTS}")
+                    print("Increase max_download_restarts for increased download restart tries")
+                    break
+                i += 1
         except youtube_dl.utils.DownloadError:
             print(
                 f'download error: metafromtitle:{metafromtitle}, match_filter:{match_filter} matchtitle:{matchtitle} | {format}')

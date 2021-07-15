@@ -23,8 +23,8 @@ import argparse
 import os
 import re
 
-# min download speed in KiB/s
-MIN_DOWNLOAD_SPEED = 200
+# download unit MiB/s or KiB/s
+DOWNLOAD_UNIT = "KiB/s"
 
 YL_FMT_DICT = {
     "m4a": '140',
@@ -44,14 +44,19 @@ YL_FMT_DICT = {
 }
 
 
+class DownloadThrottleError(Exception):
+    """Raised when download throttling is detected"""
+    pass
+
+
 def _my_hook(response):
     if "_speed_str" in response:
         speed_str = response["_speed_str"]
         if re.search(r"[0-9]+\.[0-9]+", speed_str):
             speed, unit = float(speed_str[:-5]), speed_str[-5:]
-            if unit == "KiB/s" and speed < MIN_DOWNLOAD_SPEED:
+            if unit == DOWNLOAD_UNIT and speed < MIN_DOWNLOAD_SPEED:
                 print(f"Speed is below {MIN_DOWNLOAD_SPEED} {unit}. Throttling possible. Exiting process and restarting download")
-                exit(2)
+                raise DownloadThrottleError
     if response["status"] == "finished":
         global CURRENT_FILENAME
         CURRENT_FILENAME = response["filename"]
@@ -107,6 +112,12 @@ def parse_args():
                         default="../datasets/soccer/orig_video",
                         help="directory where videos are downloaded to. " +
                         "Created automatically if it doesnt alr exist")
+    parser.add_argument('-min_s', '--min_download_speed', type=int, default=200,
+                        help="Def: 200. Min download speed in KiB/s." +
+                             "If download speed goes below min_download_speed, download restarts")
+    parser.add_argument('-max_r', '--max_download_restarts', type=int, default=50,
+                        help="Def: 50. Max download restarts if throttling/low download speed detected." +
+                             "Increase max download speed threshold in download_from_youtube_urls.py")
     parser.add_argument('-r', '--force_res', type=str,
                         help="Overrrides the resolution value in csv. " +
                              "Enter a valid resolution value in form mp4_640x360/mp4_853x480/mp4_1280x720")
@@ -119,6 +130,11 @@ def main():
     download_list = load_video_urls_from_csv(args.url_csv)
     os.makedirs(args.download_dir, exist_ok=True)
 
+    # min download speed in KiB/s
+    global MIN_DOWNLOAD_SPEED
+    MIN_DOWNLOAD_SPEED = args.min_download_speed
+    MAX_DOWNLOAD_RESTARTS = args.max_download_restarts
+
     # add format and outtmpl later
     ydl_opts = {"progress_hooks": [_my_hook]}
     time_fmt = re.compile(r"^\d{2}:[0-5][0-9]:[0-5][0-9]$")
@@ -130,11 +146,22 @@ def main():
             ydl_opts["format"] = fmt
             ydl_opts["outtmpl"] = os.path.join(
                 args.download_dir, f'%(title)s-{format}.%(ext)s')
-            # for avoiding youtube throtling
-            ydl_opts['retries'] = 5000
-            ydl_opts['socket_timeout'] = 1
             ydl_opts["external_downloader"] = "aria2c"
-            download(yt_url, ydl_opts)
+
+            # for avoiding youtube throtling
+            download_complete = False
+            i = 0
+            while not download_complete:
+                try:
+                    download(yt_url, ydl_opts)
+                    download_complete = True
+                except DownloadThrottleError:
+                    print("Restarting download")
+                if i > MAX_DOWNLOAD_RESTARTS:
+                    print(f"Aborting. Max restarts exceeded {MAX_DOWNLOAD_RESTARTS}")
+                    print("Increase max_download_restarts for increased download restart tries")
+                    break
+                i += 1
 
             if max_length == "-1":  # no video trimming, use full orig length
                 continue

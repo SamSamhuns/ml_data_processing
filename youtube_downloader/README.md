@@ -9,14 +9,10 @@ Install the pip version with `pip install youtube-dl`
 ### Download YT videos with predefined URLs
 
 ```bash
-$ python download_from_youtube_urls.py -u URL_SRC_CSV_PATH -v VIDEO_SAVE_DIR
+$ python download_from_youtube_urls.py -u URL_SRC_CSV_PATH -v VIDEO_SAVE_DIR -min_s 200 -max_r 50
 ```
 
-Download with throttling detection based restarts. If speed drops below 200KiB/s (Can be changed with `MIN_DOWNLOAD_SPEED` in `download_from_youtube_urls.py`), youtube-dl stops and restarts download:
-
-```bash
-$ python download_from_youtube_urls_with_restarts.py -u URL_SRC_CSV_PATH -v VIDEO_SAVE_DIR -m MAX_DOWNLOAD_RESTARTS
-```
+Download with throttling detection based restarts. If speed drops below 200KiB/s (Can be changed with `min_s`), youtube-dl stops and restarts download for `max_r` tries.
 
 The `URL_SRC_CSV_PATH` csv file must have data in the format: `channel, format, lang, yt_title, yt_url`. Among these the `format` and `yt_url` are the most important ones.
 
