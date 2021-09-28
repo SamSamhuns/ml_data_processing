@@ -1,10 +1,10 @@
-import tensorflow as tf
 from PIL import Image, ImageDraw, ImageFont
 import numpy as np
 import argparse
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+import tensorflow as tf
 tf.compat.v1.enable_eager_execution()  # only for tf 1.x
 
 
@@ -134,14 +134,12 @@ def add_all_augs_to_img(img_path, target_dir):
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Apply augmentations to image to check results')
-    parser.add_argument("-i",
-                        "--image_path",
+    parser.add_argument("-i", "--image_path",
                         default="./test_img.png",
-                        help='path of image on which augmentations will be applied')
-    parser.add_argument('-t',
-                        '--target_dir',
+                        help='path of image on which augmentations will be applied. (default: %(default)s)')
+    parser.add_argument("-t", "--target_dir",
                         default="aug_images",
-                        help='path to target dir where augmented images will be saved')
+                        help='path to target dir where augmented images will be saved. (default: %(default)s)')
     args = parser.parse_args()
     return args
 
