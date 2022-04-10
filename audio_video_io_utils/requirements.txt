@@ -1,0 +1,5 @@
+av==8.0.3
+decord==0.5.2
+ffmpeg-python==0.2.0
+opencv-python==4.5.2.52
+vidgear==0.2.2

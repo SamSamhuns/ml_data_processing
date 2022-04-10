@@ -1,0 +1,3 @@
+imageio==2.16.1
+opencv-python==4.5.5.64
+pyvips==2.1.16
