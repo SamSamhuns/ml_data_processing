@@ -27,3 +27,4 @@ Currently support is only present for Computer Vision tasks
 ### Data Acquisition
 
 -   [Youtube Downloader](youtube_downloader)
+-   [Google, Bing Images Crawler](https://pypi.org/project/icrawler)
