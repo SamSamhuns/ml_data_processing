@@ -10,5 +10,5 @@ Displays the results of tf augmentations on images
 ## Usage
 
 ```shell
-$ python image_augmentation_test.py -i SRC_IMG -t TARGET_DIR
+python image_augmentation_test.py -i SRC_IMG -t TARGET_DIR
 ```
