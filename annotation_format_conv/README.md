@@ -11,4 +11,4 @@ Navigate to `yolo_pascalvoc`
 
 -   [x] YOLO to PascalVOC
 -   [x] PascalVOC to YOLO
--   [ ] COCO to YOLO & vice versa (Refer to blog <https://towardsdatascience.com/how-to-work-with-object-detection-datasets-in-coco-format-9bf4fb5848a4> and use PyPi package `fiftyone`)
+-   [ ] COCO to YOLO & vice versa (Refer to <https://github.com/Taeyoung96/Yolo-to-COCO-format-converter>)
