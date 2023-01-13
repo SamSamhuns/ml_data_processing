@@ -40,10 +40,9 @@ YOLO data directory structure: (Sample present in `../yolo_data_example`)
 Convert YOLO annotation into a COCO JSON annotation:
 
 ```shell
+# Note --is flag sets whether class_id should begin with 0 or 1 (YOLOv5 uses 0 indexed class ids)
 python yolo_to_coco.py --rd ../yolo_data_example  --cp ../yolo_data_example/classes.txt --is 0 --op coco.json
 ```
-
-Note: Including the `-c` flag copies the image from PascalVOC to the new YOLO directory
 
 ## Visualization
 
