@@ -1,5 +1,9 @@
 # Machine Learning Data Processing Tools
 
+- [Machine Learning Data Processing Tools](#machine-learning-data-processing-tools)
+    - [Data Processing](#data-processing)
+    - [Data Acquisition](#data-acquisition)
+
 Tools for data filtering, preprocessing, and format conversion for ML tasks.
 
 Currently support is only present for Computer Vision tasks
