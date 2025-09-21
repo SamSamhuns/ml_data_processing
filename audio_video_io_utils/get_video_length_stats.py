@@ -1,6 +1,7 @@
 """
 Count the quartile and average lengths of video files recursively inside a directory
 """
+
 import glob
 import time
 import argparse
@@ -24,7 +25,9 @@ def get_video_len(fpath) -> float:
     return video_len
 
 
-def get_video_length_statistics(video_lengths: List[float], npy_spath="video_lengths.npy") -> None:
+def get_video_length_statistics(
+    video_lengths: List[float], npy_spath="video_lengths.npy"
+) -> None:
     """
     Print and save video length statistics given array of video lengths
     """
@@ -41,7 +44,7 @@ def get_video_length_statistics(video_lengths: List[float], npy_spath="video_len
     print(f"\tMin           = {video_lengths[0]}s")
     print(f"\t25th Q        = {video_lengths[first_quartile]:.3f}s")
     print(f"\t50th Q/Median = {video_lengths[second_quartile]:.3f}s")
-    print(f"\tAverage       = {sum(video_lengths)/n:.3f}s")
+    print(f"\tAverage       = {sum(video_lengths) / n:.3f}s")
     print(f"\t75th Q        = {video_lengths[third_quartile]:.3f}s")
     print(f"\tMax           = {video_lengths[-1]}s")
     np.save(npy_spath, np.asarray(video_lengths))
@@ -50,18 +53,20 @@ def get_video_length_statistics(video_lengths: List[float], npy_spath="video_len
 def single_process_count(root_dir: str, ext: str = "mp4") -> None:
     print("\nSingle-process counting video length statistics")
     t1 = time.time()
-    video_lengths = [get_video_len(fpath)
-                     for fpath in glob.glob(f"{root_dir}/**/*.{ext}", recursive=True)]
+    video_lengths = [
+        get_video_len(fpath)
+        for fpath in glob.glob(f"{root_dir}/**/*.{ext}", recursive=True)
+    ]
     get_video_length_statistics(video_lengths)
-    print(
-        f"Processing time for {len(video_lengths)} videos {time.time()-t1:.2f}s")
+    print(f"Processing time for {len(video_lengths)} videos {time.time() - t1:.2f}s")
 
 
 def multi_process_count(root_dir: str, ext: str = "mp4") -> None:
     def _get_multi_process_length(root_dir, ext="mp4"):
         pool = multiprocessing.Pool()
-        video_paths = [fpath for fpath in glob.glob(
-            f"{root_dir}/**/*.{ext}", recursive=True)]
+        video_paths = [
+            fpath for fpath in glob.glob(f"{root_dir}/**/*.{ext}", recursive=True)
+        ]
 
         results = pool.map(get_video_len, video_paths)
         pool.close()
@@ -72,18 +77,19 @@ def multi_process_count(root_dir: str, ext: str = "mp4") -> None:
     t1 = time.time()
     video_lengths = _get_multi_process_length(root_dir, ext)
     get_video_length_statistics(video_lengths)
-    print(
-        f"Processing time for {len(video_lengths)} videos {time.time()-t1:.2f}s")
+    print(f"Processing time for {len(video_lengths)} videos {time.time() - t1:.2f}s")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        "Get statistics on video length of videos inside a directory")
-    parser.add_argument("-s", "--source_dir",
-                        required=True,
-                        help='Path to source dir.')
-    parser.add_argument("-e", "--extension",
-                        default="mp4",
-                        help="Video file extensions to be considered. (default: %(default)s)")
+        "Get statistics on video length of videos inside a directory"
+    )
+    parser.add_argument("-s", "--source_dir", required=True, help="Path to source dir.")
+    parser.add_argument(
+        "-e",
+        "--extension",
+        default="mp4",
+        help="Video file extensions to be considered. (default: %(default)s)",
+    )
     args = parser.parse_args()
     multi_process_count(args.source_dir, args.extension)

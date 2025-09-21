@@ -3,9 +3,11 @@ import numpy as np
 from typing import Tuple
 
 
-def pad_resize_image(cv2_img: np.ndarray,
-                     new_size: Tuple[int, int] = (640, 480),
-                     color: Tuple[int, int, int] = (125, 125, 125)) -> np.ndarray:
+def pad_resize_image(
+    cv2_img: np.ndarray,
+    new_size: Tuple[int, int] = (640, 480),
+    color: Tuple[int, int, int] = (125, 125, 125),
+) -> np.ndarray:
     """
     resize and pad image if necessary, maintaining orig scale
     args:
@@ -26,7 +28,7 @@ def pad_resize_image(cv2_img: np.ndarray,
     # center image with padding on top/bottom or left/right
     top, bottom = d_h // 2, d_h - (d_h // 2)
     left, right = d_w // 2, d_w - (d_w // 2)
-    pad_rsz_img = cv2.copyMakeBorder(rsz_img, top, bottom, left, right,
-                                     cv2.BORDER_CONSTANT,
-                                     value=color)
+    pad_rsz_img = cv2.copyMakeBorder(
+        rsz_img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color
+    )
     return pad_rsz_img

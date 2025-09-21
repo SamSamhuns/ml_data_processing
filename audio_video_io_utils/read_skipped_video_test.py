@@ -4,7 +4,6 @@ import time
 import numpy as np
 from vidgear.gears import CamGear
 
-import os
 # uncomment below increase DECORD read retry attempts
 # os.environ['DECORD_EOF_RETRY_MAX'] = "20480"
 from decord import cpu
@@ -13,7 +12,7 @@ from decord import VideoReader, VideoLoader
 
 def get_frame(cap, index):
     if cap.isOpened():
-        if hasattr(cv2, 'cv'):
+        if hasattr(cv2, "cv"):
             cap.set(cv2.cv.CAP_PROP_POS_FRAMES, index)
         else:
             cap.set(cv2.CAP_PROP_POS_FRAMES, index)
@@ -82,7 +81,7 @@ def get_img_list_opencv_seq(video_filename, MAX_N_FRAME=300, reshape_size=(299, 
 def get_img_list_reader_av(video_filename, MAX_N_FRAME=300, reshape_size=(299, 299)):
     start = time.time()
     cap = av.open(video_filename)
-    cap.streams.video[0].thread_type = 'AUTO'
+    cap.streams.video[0].thread_type = "AUTO"
     step = fps = int(round(cap.streams.video[0].average_rate))
     nframes = np.floor(cap.streams.video[0].frames)
     print(f"PyAV Seq: FPS={fps}, num frames={nframes}")
@@ -129,7 +128,9 @@ def get_img_list_vidgear_seq(video_filename, MAX_N_FRAME=300, reshape_size=(299,
     return np.array(img_list), elapsed_time
 
 
-def get_img_list_decord_batched(video_filename, MAX_N_FRAME=300, reshape_size=(299, 299)):
+def get_img_list_decord_batched(
+    video_filename, MAX_N_FRAME=300, reshape_size=(299, 299)
+):
     """Useful for skipping frames
     interval : int
         Intra-batch frame interval.
@@ -152,10 +153,17 @@ def get_img_list_decord_batched(video_filename, MAX_N_FRAME=300, reshape_size=(2
     batch = 32
     step = fps = int(round(cap.get(cv2.CAP_PROP_FPS)))
     cap.release()
-    vl = VideoLoader([video_filename], ctx=[cpu(0)], shape=(
-        batch, height, width, 3), interval=step, skip=0, shuffle=1)
+    vl = VideoLoader(
+        [video_filename],
+        ctx=[cpu(0)],
+        shape=(batch, height, width, 3),
+        interval=step,
+        skip=0,
+        shuffle=1,
+    )
     print(
-        f"Decord Batched: FPS={fps}, num frames={len(vl)} * {batch} = {len(vl) * batch}")
+        f"Decord Batched: FPS={fps}, num frames={len(vl)} * {batch} = {len(vl) * batch}"
+    )
 
     arr = []
     for batch in vl:
@@ -212,31 +220,38 @@ def main():
     video_filename = "messi.mp4"
 
     img_arr, etime = get_img_list_vidgear_seq(
-        video_filename, MAX_N_FRAME=300, reshape_size=(299, 299))
+        video_filename, MAX_N_FRAME=300, reshape_size=(299, 299)
+    )
     print("\tVidGears Seq:", img_arr.shape, etime)
 
     img_arr, etime = get_img_list_opencv_seek(
-        video_filename, MAX_N_FRAME=300, reshape_size=(299, 299))
+        video_filename, MAX_N_FRAME=300, reshape_size=(299, 299)
+    )
     print("\tOpenCV seek:", img_arr.shape, etime)
 
     img_arr, etime = get_img_list_opencv_seq(
-        video_filename, MAX_N_FRAME=300, reshape_size=(299, 299))
+        video_filename, MAX_N_FRAME=300, reshape_size=(299, 299)
+    )
     print("\tOpenCV sequential:", img_arr.shape, etime)
 
     img_arr, etime = get_img_list_reader_av(
-        video_filename, MAX_N_FRAME=300, reshape_size=(299, 299))
+        video_filename, MAX_N_FRAME=300, reshape_size=(299, 299)
+    )
     print("\tPyAV Seq:", img_arr.shape, etime)
 
     img_arr, etime = get_img_list_decord_seq(
-        video_filename, MAX_N_FRAME=300, reshape_size=(299, 299))
+        video_filename, MAX_N_FRAME=300, reshape_size=(299, 299)
+    )
     print("\tDecord Seq:", img_arr.shape, etime)
 
     img_arr, etime = get_img_list_decord_index(
-        video_filename, MAX_N_FRAME=300, reshape_size=(299, 299))
+        video_filename, MAX_N_FRAME=300, reshape_size=(299, 299)
+    )
     print("\tDecord Indexed:", img_arr.shape, etime)
 
     img_arr, etime = get_img_list_decord_batched(
-        video_filename, MAX_N_FRAME=300, reshape_size=(299, 299))
+        video_filename, MAX_N_FRAME=300, reshape_size=(299, 299)
+    )
     print("\tDecord Batched:", img_arr.shape, etime)
 
 

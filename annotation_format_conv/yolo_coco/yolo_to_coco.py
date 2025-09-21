@@ -14,6 +14,7 @@ Directory must be organized in the following structure
 Sample Usage:
     python yolo_to_coco.py --rd ../yolo_data_example  --cp ../yolo_data_example/classes.txt --is 0 --op coco.json
 """
+
 from pathlib import Path
 import argparse
 import json
@@ -41,8 +42,14 @@ def get_images_info_and_annotations(args):
     """
     root_p = args.root_dir
     root_p = Path(root_p)
-    if not root_p.is_dir() or not(root_p / IMAGES_DIR).exists() or not(root_p / LABELS_DIR).exists():
-        raise ValueError(f"{args.root_dir} must be a dir with subdirs {IMAGES_DIR} and {LABELS_DIR}")
+    if (
+        not root_p.is_dir()
+        or not (root_p / IMAGES_DIR).exists()
+        or not (root_p / LABELS_DIR).exists()
+    ):
+        raise ValueError(
+            f"{args.root_dir} must be a dir with subdirs {IMAGES_DIR} and {LABELS_DIR}"
+        )
 
     image_paths = []
     for extn in IMG_EXTNS:
@@ -54,7 +61,9 @@ def get_images_info_and_annotations(args):
 
     for image_path in tqdm.tqdm(image_paths):
         # image_id follows the format from YOLOv5 val.py json generation
-        image_id = int(image_path.stem) if image_path.stem.isnumeric() else image_path.stem
+        image_id = (
+            int(image_path.stem) if image_path.stem.isnumeric() else image_path.stem
+        )
 
         # Build image annotation, known the image's width and height
         w, h = imagesize.get(str(image_path))
@@ -76,7 +85,7 @@ def get_images_info_and_annotations(args):
         # coco format - (annotation_id, x_upper_left, y_upper_left, width, height)
         for label_line in label_read_line:
             # start with category_id with 0 or 1
-            category_id = (int(label_line.split()[0]) + args.id_start)
+            category_id = int(label_line.split()[0]) + args.id_start
             x_center = float(label_line.split()[1])
             y_center = float(label_line.split()[2])
             width = float(label_line.split()[3])
@@ -118,8 +127,14 @@ def debug_conv(args):
 
     root_p = args.root_dir
     root_p = Path(root_p)
-    if not root_p.is_dir() or not(root_p / IMAGES_DIR).exists() or not(root_p / LABELS_DIR).exists():
-        raise ValueError(f"{args.root_dir} must be a dir with subdirs {IMAGES_DIR} and {LABELS_DIR}")
+    if (
+        not root_p.is_dir()
+        or not (root_p / IMAGES_DIR).exists()
+        or not (root_p / LABELS_DIR).exists()
+    ):
+        raise ValueError(
+            f"{args.root_dir} must be a dir with subdirs {IMAGES_DIR} and {LABELS_DIR}"
+        )
 
     image_paths = []
     for extn in IMG_EXTNS:
@@ -184,18 +199,26 @@ def debug_conv(args):
 def parser_args():
     parser = argparse.ArgumentParser("Yolo format annotations to COCO dataset format")
     parser.add_argument(
-        "--rd", "--root_dir", dest="root_dir",
+        "--rd",
+        "--root_dir",
+        dest="root_dir",
         type=str,
         help="Path to the root data directory with images and labels subdirs",
     )
     parser.add_argument(
-        "--cp", "--class_path", dest="class_path",
+        "--cp",
+        "--class_path",
+        dest="class_path",
         type=str,
         help="Path to class.txt or obj.names. File containing class names in newlines",
     )
     parser.add_argument(
-        "--is", "--id_start", dest="id_start",
-        default=0, type=int, choices=[0, 1],
+        "--is",
+        "--id_start",
+        dest="id_start",
+        default=0,
+        type=int,
+        choices=[0, 1],
         help="Whether class id annotation indexes should start with 0 or 1 (default: %(default)s)",
     )
     parser.add_argument(
@@ -204,8 +227,11 @@ def parser_args():
         help="Visualize bounding box and print annotation information",
     )
     parser.add_argument(
-        "--op", "--output_json_path", dest="output_json_path",
-        default="coco_annot.json", type=str,
+        "--op",
+        "--output_json_path",
+        dest="output_json_path",
+        default="coco_annot.json",
+        type=str,
         help="Path to the converted COCO JSON annotation output (default: %(default)s)",
     )
     parser.add_argument(

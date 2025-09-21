@@ -16,8 +16,8 @@ def xyxy2cxcywh(size, box):
     convert x0,x1,y0,y1 to norm cx,cy,w,h
     size = (width, height), box = []
     """
-    dw = 1. / (size[0])
-    dh = 1. / (size[1])
+    dw = 1.0 / (size[0])
+    dh = 1.0 / (size[1])
     x = (box[0] + box[1]) / 2.0 - 1
     y = (box[2] + box[3]) / 2.0 - 1
     w = box[1] - box[0]

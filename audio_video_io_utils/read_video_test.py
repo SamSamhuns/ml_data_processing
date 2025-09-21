@@ -76,9 +76,15 @@ def load_video_decord_batched(inputfile):
         `2`:  random order
         `3`:  random frame access in each video only.
     """
-    vl = VideoLoader([inputfile], ctx=[cpu(0)], shape=(
-        10, 600, 800, 3), interval=0, skip=0, shuffle=1)
-    print('Total batches:', len(vl))
+    vl = VideoLoader(
+        [inputfile],
+        ctx=[cpu(0)],
+        shape=(10, 600, 800, 3),
+        interval=0,
+        skip=0,
+        shuffle=1,
+    )
+    print("Total batches:", len(vl))
 
     arr = []
     for batch in vl:
@@ -121,11 +127,9 @@ def load_video_decord_seq(inputfile):
 
 
 def load_video_cv2_mthread(inputfile):
-
     class FileVideoStream:
         def __init__(self, path, transform=None, queue_size=128):
-            """Class to create separate thread to read frames from video
-            """
+            """Class to create separate thread to read frames from video"""
             self.stream = cv2.VideoCapture(path)
             self.thread_stopped = False
             self.transform = transform
@@ -224,6 +228,7 @@ def disp_video_cv2_mthread_v2(inputfile):
     Faster than single thread for video/webcam disp
     Highly recommended for webcam use over single thread cv
     """
+
     class VideoStreamWidget(object):
         def __init__(self, src=0):
             self.capture = cv2.VideoCapture(src)
@@ -237,13 +242,13 @@ def disp_video_cv2_mthread_v2(inputfile):
             while True:
                 if self.capture.isOpened():
                     (self.status, self.frame) = self.capture.read()
-                time.sleep(.01)
+                time.sleep(0.01)
 
         def show_frame(self):
             # Display frames in main program
-            cv2.imshow('frame', self.frame)
+            cv2.imshow("frame", self.frame)
             key = cv2.waitKey(1)
-            if key == ord('q'):
+            if key == ord("q"):
                 self.capture.release()
                 cv2.destroyAllWindows()
                 exit(1)
@@ -254,13 +259,13 @@ def disp_video_cv2_mthread_v2(inputfile):
             try:
                 t1 = time.time()
                 status, frame = cap.read()
-                cv2.imshow('frame', frame)
+                cv2.imshow("frame", frame)
                 key = cv2.waitKey(1)
-                if key == ord('q'):
+                if key == ord("q"):
                     cap.release()
                     cv2.destroyAllWindows()
                     exit(1)
-                print(f"FPS: {1/(time.time()-t1):.2f}")
+                print(f"FPS: {1 / (time.time() - t1):.2f}")
             except AttributeError:
                 pass
 
@@ -270,7 +275,7 @@ def disp_video_cv2_mthread_v2(inputfile):
             try:
                 t1 = time.time()
                 video_stream_widget.show_frame()
-                print(f"FPS: {1/(time.time()-t1):.2f}")
+                print(f"FPS: {1 / (time.time() - t1):.2f}")
             except AttributeError:
                 pass
 
@@ -300,19 +305,18 @@ def load_video_ffmpeg(inputfile):
     width, height = 800, 600
     # Stream the entire video as one large array of bytes
     out, _ = (
-        ffmpeg
-        .input(inputfile)
-        .filter('scale', width, height)
-        .output('pipe:', format='rawvideo', pix_fmt='rgb24',
-                **{'preset': "ultrafast"},
-                **{"loglevel": "error"})
+        ffmpeg.input(inputfile)
+        .filter("scale", width, height)
+        .output(
+            "pipe:",
+            format="rawvideo",
+            pix_fmt="rgb24",
+            **{"preset": "ultrafast"},
+            **{"loglevel": "error"},
+        )
         .run(capture_stdout=True)
     )
-    arr = (
-        np
-        .frombuffer(out, np.uint8)
-        .reshape([-1, height, width, 3])
-    )
+    arr = np.frombuffer(out, np.uint8).reshape([-1, height, width, 3])
     print("ffmpeg:")
     print(f"\t Output shape: {arr.shape}")
     print(f"\t Time: {time.time() - t1:.2f} s")
@@ -339,9 +343,9 @@ def load_video_pyav(inputfile):
     t1 = time.time()
     arr = []
     container = av.open(inputfile)
-    container.streams.video[0].thread_type = 'AUTO'  # Go faster!
+    container.streams.video[0].thread_type = "AUTO"  # Go faster!
     for frame in container.decode(video=0):
-        frame = frame.to_ndarray(format='rgb24')
+        frame = frame.to_ndarray(format="rgb24")
         frame = cv2.resize(frame, (800, 600))
         arr.append(frame)
     container.close()

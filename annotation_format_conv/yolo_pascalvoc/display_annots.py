@@ -5,19 +5,28 @@ from utils import cxywh2cxyxy
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description='Object Detection Annotation display for yolo or voc')
-    parser.add_argument("-ip    ",
-                        "--image_path",
-                        default="yolo/images/COCO_train2014_000000000025.jpg",
-                        help='path to image where annotations qwill be drawn')
-    parser.add_argument('-at', '--annotation_type', type=str,
-                        default='voc',
-                        choices=['voc', 'yolo'],
-                        help='Annotation Type. Default: voc')
-    parser.add_argument('-ap',
-                        '--annot_path',
-                        default="VOCdevkit/VOC2007/Annotations/COCO_train2014_000000000025.xml",
-                        help='Path to annotation file. Must match with the annotation type')
+        description="Object Detection Annotation display for yolo or voc"
+    )
+    parser.add_argument(
+        "-ip    ",
+        "--image_path",
+        default="yolo/images/COCO_train2014_000000000025.jpg",
+        help="path to image where annotations qwill be drawn",
+    )
+    parser.add_argument(
+        "-at",
+        "--annotation_type",
+        type=str,
+        default="voc",
+        choices=["voc", "yolo"],
+        help="Annotation Type. Default: voc",
+    )
+    parser.add_argument(
+        "-ap",
+        "--annot_path",
+        default="VOCdevkit/VOC2007/Annotations/COCO_train2014_000000000025.xml",
+        help="Path to annotation file. Must match with the annotation type",
+    )
     args = parser.parse_args()
     return args
 
@@ -58,7 +67,8 @@ def get_txt_annot_for_yolo(annot_path, width, height):
     classes_and_annots = np.loadtxt(annot_path).reshape(-1, 5)
     for label in classes_and_annots:
         class_id, xmin, xmax, ymin, ymax = cxywh2cxyxy(
-            label[0], width, height, label[1], label[2], label[3], label[4])
+            label[0], width, height, label[1], label[2], label[3], label[4]
+        )
         final_labels.append([class_id, xmin, ymin, xmax, ymax])
 
     return final_labels
@@ -76,13 +86,15 @@ def main():
 
     for classname, xmin, ymin, xmax, ymax in final_labels:
         cv2.rectangle(img, (xmin, ymin), (xmax, ymax), (0, 0, 255), 2)
-        cv2.putText(img,
-                    str(classname),
-                    (xmin, ymin),
-                    fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=1,
-                    color=(0, 255, 0),
-                    thickness=2)
+        cv2.putText(
+            img,
+            str(classname),
+            (xmin, ymin),
+            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+            fontScale=1,
+            color=(0, 255, 0),
+            thickness=2,
+        )
     cv2.imshow("Image with bboxes", img)
     cv2.waitKey(0)
 

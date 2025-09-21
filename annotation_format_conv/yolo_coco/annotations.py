@@ -1,6 +1,7 @@
 """
 COCO annotation creation utility functions
 """
+
 from pathlib import Path
 
 
@@ -8,9 +9,7 @@ from pathlib import Path
 coco_format_dict = {"images": [{}], "categories": [], "annotations": [{}]}
 
 
-def create_image_annotation(
-    file_path: Path, width: int, height: int, image_id: int
-):
+def create_image_annotation(file_path: Path, width: int, height: int, image_id: int):
     file_path = file_path.name
     image_annotation = {
         "file_name": file_path,
